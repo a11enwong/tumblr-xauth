@@ -31,7 +31,6 @@ static TumblrXAuth * tumblrXAuth = nil;
 + (void) testTumblrXAuth
 {
   self = [[TestTumblrXAuth alloc] init];
-  [tumblrXAuth release];
   tumblrXAuth = [[TumblrXAuth alloc] init];
 
   tumblrXAuth.consumerKey = CONSUMER_KEY;

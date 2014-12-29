@@ -33,7 +33,7 @@
 										 NULL,
 										 (CFStringRef)@"!*'();:@&=+$,/?%#[]",
 										 kCFStringEncodingUTF8);
-  return [encodedString autorelease];
+  return encodedString;
 }
 @end
 
@@ -62,35 +62,28 @@
   return self;
 }
 
-- (void) dealloc
-{
-  [data release];
-  [super dealloc];
-}
 
 - (void) resetNonce
 {
-  [nonce release];
   nonce = nil;
 }
 
 - (void) resetTimestamp
 {
-  [timestamp release];
   timestamp = nil;
 }
 
 - (NSString *) nonce
 {
   if (nonce == nil)
-    nonce = [[NSString stringWithFormat:@"%d", arc4random()] retain];
+    nonce = [NSString stringWithFormat:@"%d", arc4random()];
   return nonce;
 }
 
 - (NSString *) timestamp
 {
   if (timestamp == nil)
-    timestamp = [[NSString stringWithFormat:@"%d", (int)(((float)([[NSDate date] timeIntervalSince1970])) + 0.5)] retain];
+    timestamp = [NSString stringWithFormat:@"%d", (int)(((float)([[NSDate date] timeIntervalSince1970])) + 0.5)];
   return timestamp;
 }
 
@@ -105,10 +98,10 @@
 
   NSString * oauth_consumer_key = [self.consumerKey urlEncode];
   NSString * oauth_nonce = [self.nonce urlEncode];
-  NSString * oauth_signature_method = [[NSString stringWithString:@"HMAC-SHA1"] urlEncode];
+  NSString * oauth_signature_method = [@"HMAC-SHA1" urlEncode];
   NSString * oauth_timestamp = [self.timestamp urlEncode];
-  NSString * oauth_version = [[NSString stringWithString:@"1.0"] urlEncode];
-  NSString * x_auth_mode = [[NSString stringWithString:@"client_auth"] urlEncode];
+  NSString * oauth_version = [@"1.0" urlEncode];
+  NSString * x_auth_mode = [@"client_auth" urlEncode];
   NSString * x_auth_password = [self.password urlEncode];
   NSString * x_auth_username = [self.username urlEncode];
 
@@ -161,11 +154,11 @@
 {
   NSArray * keysAndValues = [NSArray arrayWithObjects:
 				     [NSString stringWithFormat:@"%@=\"%@\"", @"oauth_nonce", [self.nonce urlEncode]],
-				     [NSString stringWithFormat:@"%@=\"%@\"", @"oauth_signature_method", [[NSString stringWithString:@"HMAC-SHA1"] urlEncode]],
+				     [NSString stringWithFormat:@"%@=\"%@\"", @"oauth_signature_method", [@"HMAC-SHA1" urlEncode]],
 				     [NSString stringWithFormat:@"%@=\"%@\"", @"oauth_timestamp", [self.timestamp urlEncode]],
 				     [NSString stringWithFormat:@"%@=\"%@\"", @"oauth_consumer_key", [self.consumerKey urlEncode]],
 				     [NSString stringWithFormat:@"%@=\"%@\"", @"oauth_signature", [self.signature urlEncode]],
-				     [NSString stringWithFormat:@"%@=\"%@\"", @"oauth_version", [[NSString stringWithString:@"1.0"] urlEncode]],
+				     [NSString stringWithFormat:@"%@=\"%@\"", @"oauth_version", [@"1.0" urlEncode]],
 				     nil];
   if (state == TumblrXAuthStateInfo && self.token && [self.token length] > 0)
     keysAndValues = [keysAndValues arrayByAddingObject:[NSString stringWithFormat:@"%@=\"%@\"", @"oauth_token", [self.token urlEncode]]];
@@ -182,7 +175,7 @@
   state = TumblrXAuthStateAuthorize;
 
   [tumblrURL release];
-  tumblrURL = [[NSString stringWithString:@"https://www.tumblr.com/oauth/access_token"] retain];
+  tumblrURL = @"https://www.tumblr.com/oauth/access_token";
   NSMutableURLRequest* postRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:tumblrURL]];
   [postRequest setHTTPMethod: @"POST"];
   NSArray * parameterArray = [NSArray arrayWithObjects:
@@ -209,8 +202,7 @@
   
   state = TumblrXAuthStateInfo;
 
-  [tumblrURL release];
-  tumblrURL = [[NSString stringWithString:@"http://api.tumblr.com/v2/user/info"] retain];
+  tumblrURL = @"http://api.tumblr.com/v2/user/info";
   NSMutableURLRequest* postRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:tumblrURL]];
   [postRequest setHTTPMethod: @"POST"];
   [postRequest addValue:self.authorizationHeader
